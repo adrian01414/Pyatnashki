@@ -10,14 +10,14 @@ int main(int argc, char* argv[])
         printf("Err: %s", SDL_GetError());
     }
 
-    SDL_Window* window = SDL_CreateWindow("Hello, Adrean", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window* window = SDL_CreateWindow("Pyatnashki", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
     if (NULL == window) {
         printf("Err: %s", SDL_GetError);
         return -1;
     }
 
     SDL_Event windowEvent;
-    while (true) {
+    while (1) {
         if (SDL_PollEvent(&windowEvent)) {
             if (SDL_QUIT == windowEvent.type) break;
         }
