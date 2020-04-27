@@ -5,34 +5,40 @@
 #define WIDTH 600
 #define HEIGHT 600
 
-int getRand(int min, int max) {
-    return rand() % (max - min) + min;
-}
-
-/*void cDisplay(int* obj) {
-    for (int i = 0; i < 16; i++) {
-        printf("%2d", obj[i]);
-        if (i % 3 == 0) printf("\n");
-    }
-}
-
-void getNumber(int* obj) {
-    int arr[17];
-    for (int i = 1; i <= 16; i++) {
-        arr[i] = 1;
-    }
-    int temp = 0;
-    for (int i = 0; i < 16; i++) {
-        arr[i] = getRand(1, 16);
-
-    }
-
-}*/
-
 void swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
     *b = temp;
+}
+
+int getRand(int min, int max) {
+    return rand() % (max - min) + min;
+}
+
+void cDisplay(int obj[16]) {
+    for (int i = 1; i < 17; i++) {
+        if (obj[i-1] != 0) printf("%3d", obj[i - 1]);
+        else printf("   ");
+        if (i % 4 == 0) printf("\n");
+    }
+}
+
+void getNumbers(int obj[16]) {
+    int arr[17];
+    for (int i = 1; i <= 16; i++) {
+        arr[i] = 1;
+    }
+    for (int i = 0; i < 15; i++) {
+        obj[i] = getRand(1, 15);
+        if (arr[obj[i]] == 0) {
+            do{
+                if (obj[i] >= 2) obj[i]--;
+                else obj[i] = 15;
+            } while (arr[obj[i]] == 0);
+        }
+        arr[obj[i]] = 0;
+    }
+    obj[15] = 0;
 }
 
 int main(int argc, char* argv[])
