@@ -6,8 +6,7 @@
 #define HEIGHT 600
 
 SDL_Window* window;
-SDL_Renderer* renderer;
-
+SDL_Surface* screen_surface = NULL;
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -52,10 +51,11 @@ int main(int argc, char* argv[])
     }
 
     SDL_Window* window = SDL_CreateWindow("Pyatnashki", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
+   
+    screen_surface = SDL_GetWindowSurface(window);
+    SDL_FillRect(screen_surface, NULL, SDL_MapRGB(screen_surface->format, 0, 0, 0));
+    SDL_UpdateWindowSurface(window);
+
     if (NULL == window) {
         printf("Err: %s", SDL_GetError());
         return -1;
