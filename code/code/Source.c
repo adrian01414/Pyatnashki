@@ -5,10 +5,13 @@
 
 #define WIDTH 600
 #define HEIGHT 600
+#define TRUE 1
+#define FALSE 0
 
 SDL_Window* window = NULL;
 SDL_Surface* screen_surface = NULL;
 SDL_Surface* smile = NULL;
+SDL_Surface* screen = NULL;
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -66,8 +69,8 @@ int init()
 
 int load() {
     smile = SDL_LoadBMP("smile.bmp");
-
-    if (smile == NULL) {
+    screen = SDL_LoadBMP("Screenshot_1.bmp");
+    if (screen == NULL || smile == NULL) {
         return 1;
     }
 
@@ -85,6 +88,8 @@ void quit() {
 
 int main(int argc, char** args)
 {
+    SDL_Rect rect;
+    rect.x = 300, rect.y = 400;
 
     if (init() == 1) {
         return 1;
@@ -93,18 +98,28 @@ int main(int argc, char** args)
     if (load() == 1) {
         return 1;
     }
-    SDL_BlitSurface(smile, NULL, screen_surface, NULL);
+    SDL_BlitSurface(smile, NULL, screen_surface, &rect);
 
     SDL_UpdateWindowSurface(window);
 
     SDL_Event windowEvent;
-    while (1) {
+    int run = TRUE;
+    while (run) {
+        while (SDL_PollEvent(&windowEvent) != 0) {
+            if (windowEvent.type == SDL_QUIT)
+                run = FALSE;
 
-        if (SDL_PollEvent(&windowEvent)) {
-            if (SDL_QUIT == windowEvent.type) break;
+            if (windowEvent.type == SDL_KEYDOWN) {
+                if (windowEvent.key.keysym.sym == SDLK_UP) {
+                    SDL_BlitSurface(screen, NULL, screen_surface, &rect);
+                }
+                if (windowEvent.key.keysym.sym == SDLK_DOWN) {
+                    SDL_BlitSurface(smile, NULL, screen_surface, NULL);
+                }
+            }
+            SDL_UpdateWindowSurface(window);
         }
     }
     quit();
-
     return 0;
 }
