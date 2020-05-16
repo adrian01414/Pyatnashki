@@ -2,7 +2,7 @@
 #include <time.h>
 #include <SDL.h>
 #include <stdlib.h>
-//hello
+
 #define WIDTH 600
 #define HEIGHT 600
 #define TRUE 1
@@ -10,8 +10,8 @@
 
 SDL_Window* window = NULL;
 SDL_Surface* screen_surface = NULL;
-SDL_Surface* smile = NULL;
-SDL_Surface* screen = NULL;
+SDL_Surface* area = NULL;
+SDL_Surface* block = NULL;
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -68,9 +68,9 @@ int init()
 }
 
 int load() {
-    smile = SDL_LoadBMP("smile.bmp");
-    screen = SDL_LoadBMP("Screenshot_1.bmp");
-    if (screen == NULL || smile == NULL) {
+    area = SDL_LoadBMP("area.bmp");
+    block = SDL_LoadBMP("block.bmp");
+    if (area == NULL || block == NULL) {
         return 1;
     }
 
@@ -78,8 +78,10 @@ int load() {
 }
 
 void quit() {
-    SDL_FreeSurface(smile);
-    smile = NULL;
+    SDL_FreeSurface(area);
+    area = NULL;
+    SDL_FreeSurface(block);
+    block = NULL;
 
     SDL_DestroyWindow(window);
 
@@ -89,7 +91,9 @@ void quit() {
 int main(int argc, char** args)
 {
     SDL_Rect rect;
-    rect.x = 300, rect.y = 400;
+    SDL_Rect rect2;
+    rect2.x = 60, rect2.y = 60;
+    rect.x = 50, rect.y = 50;
 
     if (init() == 1) {
         return 1;
@@ -98,8 +102,17 @@ int main(int argc, char** args)
     if (load() == 1) {
         return 1;
     }
-    SDL_BlitSurface(smile, NULL, screen_surface, &rect);
-
+    SDL_BlitSurface(area, NULL, screen_surface, &rect);
+    
+    SDL_BlitSurface(block, NULL, screen_surface, &rect2);
+    while (rect2.y != 540) {
+        while (rect2.x != 540) {
+            SDL_BlitSurface(block, NULL, screen_surface, &rect2);
+            rect2.x += 120;
+        }
+        rect2.x = 60;
+        rect2.y += 120;
+    } 
     SDL_UpdateWindowSurface(window);
 
     SDL_Event windowEvent;
@@ -108,15 +121,6 @@ int main(int argc, char** args)
         while (SDL_PollEvent(&windowEvent) != 0) {
             if (windowEvent.type == SDL_QUIT)
                 run = FALSE;
-
-            if (windowEvent.type == SDL_KEYDOWN) {
-                if (windowEvent.key.keysym.sym == SDLK_UP) {
-                    SDL_BlitSurface(screen, NULL, screen_surface, &rect);
-                }
-                if (windowEvent.key.keysym.sym == SDLK_DOWN) {
-                    SDL_BlitSurface(smile, NULL, screen_surface, NULL);
-                }
-            }
             SDL_UpdateWindowSurface(window);
         }
     }
