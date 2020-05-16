@@ -2,7 +2,7 @@
 #include <time.h>
 #include <SDL.h>
 #include <stdlib.h>
-
+//hello
 #define WIDTH 600
 #define HEIGHT 600
 
