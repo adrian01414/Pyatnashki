@@ -10,8 +10,16 @@
 
 SDL_Window* window = NULL;
 SDL_Surface* screen_surface = NULL;
-SDL_Surface* smile = NULL;
-SDL_Surface* screen = NULL;
+SDL_Surface* area = NULL;
+SDL_Surface* block = NULL;
+
+// ÕŒ¬€… “»œ ƒ¿ÕÕ€’
+struct pyatna {
+    int x;
+    int y;
+    int mas;
+    int trueMas;
+};
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -31,22 +39,22 @@ void cDisplay(int obj[16]) {
     }
 }
 
-void getNumbers(int obj[16]) {
+void getNumbers(struct pyatna obj[16]) {
     int arr[17];
     for (int i = 1; i <= 16; i++) {
         arr[i] = 1;
     }
     for (int i = 0; i < 15; i++) {
-        obj[i] = getRand(1, 15);
-        if (arr[obj[i]] == 0) {
+        obj[i].mas = getRand(1, 15);
+        if (arr[obj[i].mas] == 0) {
             do {
-                if (obj[i] >= 2) obj[i]--;
-                else obj[i] = 15;
-            } while (arr[obj[i]] == 0);
+                if (obj[i].mas >= 2) obj[i].mas--;
+                else obj[i].mas = 15;
+            } while (arr[obj[i].mas] == 0);
         }
-        arr[obj[i]] = 0;
+        arr[obj[i].mas] = 0;
     }
-    obj[15] = 0;
+    obj[15].mas = 0;
 }
 
 int init()
@@ -68,9 +76,9 @@ int init()
 }
 
 int load() {
-    smile = SDL_LoadBMP("smile.bmp");
-    screen = SDL_LoadBMP("Screenshot_1.bmp");
-    if (screen == NULL || smile == NULL) {
+    area = SDL_LoadBMP("area.bmp");
+    block = SDL_LoadBMP("block.bmp");
+    if (area == NULL || block == NULL) {
         return 1;
     }
 
@@ -78,8 +86,10 @@ int load() {
 }
 
 void quit() {
-    SDL_FreeSurface(smile);
-    smile = NULL;
+    SDL_FreeSurface(area);
+    area = NULL;
+    SDL_FreeSurface(block);
+    block = NULL;
 
     SDL_DestroyWindow(window);
 
@@ -89,8 +99,20 @@ void quit() {
 int main(int argc, char** args)
 {
     SDL_Rect rect;
-    rect.x = 300, rect.y = 400;
+    SDL_Rect rect2;
+    rect2.x = 60, rect2.y = 60;
+    rect.x = 50, rect.y = 50;
 
+    // Œ¡⁄ﬂ¬À≈Õ»≈ ﬂ◊≈≈  œﬂ“Õ¿ÿ≈ 
+    struct pyatna cells[16];
+    for (int i = 0; i < 16; i += 4) {
+        for (int j = 0; j < 4; j++) {
+            cells[i + j].x = j;
+            cells[i + j].y = i;
+            cells[i + j].trueMas = i + j;
+        }
+    }
+    //
     if (init() == 1) {
         return 1;
     }
@@ -98,8 +120,17 @@ int main(int argc, char** args)
     if (load() == 1) {
         return 1;
     }
-    SDL_BlitSurface(smile, NULL, screen_surface, &rect);
+    SDL_BlitSurface(area, NULL, screen_surface, &rect);
 
+    SDL_BlitSurface(block, NULL, screen_surface, &rect2);
+    while (rect2.y != 540) {
+        while (rect2.x != 540) {
+            SDL_BlitSurface(block, NULL, screen_surface, &rect2);
+            rect2.x += 120;
+        }
+        rect2.x = 60;
+        rect2.y += 120;
+    }
     SDL_UpdateWindowSurface(window);
 
     SDL_Event windowEvent;
@@ -108,15 +139,6 @@ int main(int argc, char** args)
         while (SDL_PollEvent(&windowEvent) != 0) {
             if (windowEvent.type == SDL_QUIT)
                 run = FALSE;
-
-            if (windowEvent.type == SDL_KEYDOWN) {
-                if (windowEvent.key.keysym.sym == SDLK_UP) {
-                    SDL_BlitSurface(screen, NULL, screen_surface, &rect);
-                }
-                if (windowEvent.key.keysym.sym == SDLK_DOWN) {
-                    SDL_BlitSurface(smile, NULL, screen_surface, NULL);
-                }
-            }
             SDL_UpdateWindowSurface(window);
         }
     }
