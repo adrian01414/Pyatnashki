@@ -13,6 +13,15 @@ SDL_Surface* screen_surface = NULL;
 SDL_Surface* area = NULL;
 SDL_Surface* block = NULL;
 
+// ����� ��� ������
+struct pyatna {
+    int x;
+    int y;
+    int mas;
+    int trueMas;
+};
+
+
 void swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
@@ -31,22 +40,22 @@ void cDisplay(int obj[16]) {
     }
 }
 
-void getNumbers(int obj[16]) {
+void getNumbers(struct pyatna obj[16]) {
     int arr[17];
     for (int i = 1; i <= 16; i++) {
         arr[i] = 1;
     }
     for (int i = 0; i < 15; i++) {
-        obj[i] = getRand(1, 15);
-        if (arr[obj[i]] == 0) {
+        obj[i].mas = getRand(1, 15);
+        if (arr[obj[i].mas] == 0) {
             do {
-                if (obj[i] >= 2) obj[i]--;
-                else obj[i] = 15;
-            } while (arr[obj[i]] == 0);
+                if (obj[i].mas >= 2) obj[i].mas--;
+                else obj[i].mas = 15;
+            } while (arr[obj[i].mas] == 0);
         }
-        arr[obj[i]] = 0;
+        arr[obj[i].mas] = 0;
     }
-    obj[15] = 0;
+    obj[15].mas = 0;
 }
 
 int init()
@@ -95,6 +104,18 @@ int main(int argc, char** args)
     rect2.x = 60, rect2.y = 60;
     rect.x = 50, rect.y = 50;
 
+
+    // ���������� ����� ��������
+    struct pyatna cells[16];
+    for (int i = 0; i < 16; i += 4) {
+        for (int j = 0; j < 4; j++) {
+            cells[i + j].x = j;
+            cells[i + j].y = i;
+            cells[i + j].trueMas = i + j;
+        }
+    }
+    //
+
     if (init() == 1) {
         return 1;
     }
@@ -103,7 +124,7 @@ int main(int argc, char** args)
         return 1;
     }
     SDL_BlitSurface(area, NULL, screen_surface, &rect);
-    
+
     SDL_BlitSurface(block, NULL, screen_surface, &rect2);
     while (rect2.y != 540) {
         while (rect2.x != 540) {
@@ -112,7 +133,9 @@ int main(int argc, char** args)
         }
         rect2.x = 60;
         rect2.y += 120;
-    } 
+
+    }
+
     SDL_UpdateWindowSurface(window);
 
     SDL_Event windowEvent;
