@@ -12,15 +12,14 @@ SDL_Window* window = NULL;
 SDL_Surface* screen_surface = NULL;
 SDL_Surface* area = NULL;
 SDL_Surface* block = NULL;
+SDL_Surface* title = NULL;
 
-// ����� ��� ������
 struct pyatna {
     int x;
     int y;
     int mas;
     int trueMas;
 };
-
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -79,6 +78,7 @@ int init()
 int load() {
     area = SDL_LoadBMP("area.bmp");
     block = SDL_LoadBMP("block.bmp");
+    title = SDL_LoadBMP("title.bmp");
     if (area == NULL || block == NULL) {
         return 1;
     }
@@ -91,6 +91,8 @@ void quit() {
     area = NULL;
     SDL_FreeSurface(block);
     block = NULL;
+    SDL_FreeSurface(title);
+    title = NULL;
 
     SDL_DestroyWindow(window);
 
@@ -101,11 +103,11 @@ int main(int argc, char** args)
 {
     SDL_Rect rect;
     SDL_Rect rect2;
+    SDL_Rect rect3;
     rect2.x = 60, rect2.y = 60;
     rect.x = 50, rect.y = 50;
+    rect3.x = 0, rect3.y = 11;
 
-
-    // ���������� ����� ��������
     struct pyatna cells[16];
     for (int i = 0; i < 16; i += 4) {
         for (int j = 0; j < 4; j++) {
@@ -114,7 +116,6 @@ int main(int argc, char** args)
             cells[i + j].trueMas = i + j;
         }
     }
-    //
 
     if (init() == 1) {
         return 1;
@@ -124,7 +125,7 @@ int main(int argc, char** args)
         return 1;
     }
     SDL_BlitSurface(area, NULL, screen_surface, &rect);
-
+    SDL_BlitSurface(title, NULL, screen_surface, &rect3);
     SDL_BlitSurface(block, NULL, screen_surface, &rect2);
     while (rect2.y != 540) {
         while (rect2.x != 540) {
@@ -143,6 +144,8 @@ int main(int argc, char** args)
     while (run) {
         while (SDL_PollEvent(&windowEvent) != 0) {
             if (windowEvent.type == SDL_QUIT)
+                run = FALSE;
+            if (windowEvent.key.keysym.sym == SDLK_ESCAPE)
                 run = FALSE;
             SDL_UpdateWindowSurface(window);
         }
