@@ -13,13 +13,14 @@ SDL_Surface* screen_surface = NULL;
 SDL_Surface* area = NULL;
 SDL_Surface* block = NULL;
 
-// мнбши рхо дюммшу
+// О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
 struct pyatna {
     int x;
     int y;
     int mas;
     int trueMas;
 };
+
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -103,7 +104,8 @@ int main(int argc, char** args)
     rect2.x = 60, rect2.y = 60;
     rect.x = 50, rect.y = 50;
 
-    // назъбкемхе ъвеей оърмюьей
+
+    // О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
     struct pyatna cells[16];
     for (int i = 0; i < 16; i += 4) {
         for (int j = 0; j < 4; j++) {
@@ -113,6 +115,7 @@ int main(int argc, char** args)
         }
     }
     //
+
     if (init() == 1) {
         return 1;
     }
@@ -130,7 +133,9 @@ int main(int argc, char** args)
         }
         rect2.x = 60;
         rect2.y += 120;
+
     }
+
     SDL_UpdateWindowSurface(window);
 
     SDL_Event windowEvent;
