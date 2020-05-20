@@ -32,13 +32,7 @@ int getRand(int min, int max) {
     return rand() % (max - min) + min;
 }
 
-void cDisplay(int obj[16]) {
-    for (int i = 1; i < 17; i++) {
-        if (obj[i - 1] != 0) printf("%3d", obj[i - 1]);
-        else printf("   ");
-        if (i % 4 == 0) printf("\n");
-    }
-}
+
 
 void getNumbers(struct pyatna obj[16]) {
     int arr[17];
@@ -126,7 +120,7 @@ void dsp(struct pyatna cells[16], SDL_Rect rect2) {
             SDL_BlitSurface(block, NULL, screen_surface, &rect2);
             rect2.x += 4;
             rect2.y += 4;
-            SDL_BlitSurface(numbers[cells[i + j].mas], NULL, screen_surface, &rect2);
+            SDL_BlitSurface(numbers[cells[i + j].mas - 1], NULL, screen_surface, &rect2);
             rect2.x += 116;
             rect2.y -= 4;
         }
@@ -163,7 +157,8 @@ int main(int argc, char** args)
     SDL_BlitSurface(area, NULL, screen_surface, &rect);
     SDL_BlitSurface(title, NULL, screen_surface, &rect3);
     SDL_BlitSurface(block, NULL, screen_surface, &rect2);
-    
+
+    srand(time(0));
     getNumbers(cells);
     dsp(cells, rect2);
     
