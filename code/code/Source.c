@@ -13,6 +13,7 @@ SDL_Surface* screen_surface = NULL;
 SDL_Surface* area = NULL;
 SDL_Surface* block = NULL;
 SDL_Surface* title = NULL;
+SDL_Surface* numbers[15];
 
 struct pyatna {
     int x;
@@ -79,6 +80,21 @@ int load() {
     area = SDL_LoadBMP("area.bmp");
     block = SDL_LoadBMP("block.bmp");
     title = SDL_LoadBMP("title.bmp");
+    numbers[0] = SDL_LoadBMP("numbers/1.bmp");
+    numbers[1] = SDL_LoadBMP("numbers/2.bmp");
+    numbers[2] = SDL_LoadBMP("numbers/3.bmp");
+    numbers[3] = SDL_LoadBMP("numbers/4.bmp");
+    numbers[4] = SDL_LoadBMP("numbers/5.bmp");
+    numbers[5] = SDL_LoadBMP("numbers/6.bmp");
+    numbers[6] = SDL_LoadBMP("numbers/7.bmp");
+    numbers[7] = SDL_LoadBMP("numbers/8.bmp");
+    numbers[8] = SDL_LoadBMP("numbers/9.bmp");
+    numbers[9] = SDL_LoadBMP("numbers/10.bmp");
+    numbers[10] = SDL_LoadBMP("numbers/11.bmp");
+    numbers[11] = SDL_LoadBMP("numbers/12.bmp");
+    numbers[12] = SDL_LoadBMP("numbers/13.bmp");
+    numbers[13] = SDL_LoadBMP("numbers/14.bmp");
+    numbers[14] = SDL_LoadBMP("numbers/15.bmp");
     if (area == NULL || block == NULL) {
         return 1;
     }
@@ -93,10 +109,30 @@ void quit() {
     block = NULL;
     SDL_FreeSurface(title);
     title = NULL;
+    for (int i = 0; i < 15; i++) {
+        SDL_FreeSurface(numbers[i]);
+        numbers[i] = NULL;
+    }
 
     SDL_DestroyWindow(window);
 
     SDL_Quit();
+}
+
+void dsp(struct pyatna cells[16], SDL_Rect rect2) {
+
+    for (int i = 0; i < 16; i += 4) {
+        for (int j = 0; j < 4; j++) {
+            SDL_BlitSurface(block, NULL, screen_surface, &rect2);
+            rect2.x += 4;
+            rect2.y += 4;
+            SDL_BlitSurface(numbers[cells[i + j].mas], NULL, screen_surface, &rect2);
+            rect2.x += 116;
+            rect2.y -= 4;
+        }
+        rect2.x = 60;
+        rect2.y += 120;
+    }
 }
 
 int main(int argc, char** args)
@@ -127,22 +163,29 @@ int main(int argc, char** args)
     SDL_BlitSurface(area, NULL, screen_surface, &rect);
     SDL_BlitSurface(title, NULL, screen_surface, &rect3);
     SDL_BlitSurface(block, NULL, screen_surface, &rect2);
-    while (rect2.y != 540) {
-        while (rect2.x != 540) {
-            SDL_BlitSurface(block, NULL, screen_surface, &rect2);
-            rect2.x += 120;
-        }
-        rect2.x = 60;
-        rect2.y += 120;
-
-    }
-
+    
+    getNumbers(cells);
+    dsp(cells, rect2);
+    
     SDL_UpdateWindowSurface(window);
 
     SDL_Event windowEvent;
     int run = TRUE;
+    int getR = FALSE;
     while (run) {
         while (SDL_PollEvent(&windowEvent) != 0) {
+            if (windowEvent.key.keysym.sym == SDLK_r) {
+                if (getR == TRUE) {
+                    getR = FALSE;
+                }
+                else {
+                    getNumbers(cells);
+                    dsp(cells, rect2);
+                    getR = TRUE;
+                }
+                
+            }
+
             if (windowEvent.type == SDL_QUIT)
                 run = FALSE;
             if (windowEvent.key.keysym.sym == SDLK_ESCAPE)
