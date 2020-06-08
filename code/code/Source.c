@@ -14,6 +14,7 @@ SDL_Surface* area = NULL;
 SDL_Surface* block = NULL;
 SDL_Surface* title = NULL;
 SDL_Surface* numbers[15];
+SDL_Surface* areawin = NULL;
 
 struct pyatna {
   int x;
@@ -206,7 +207,11 @@ int main(int argc, char **args) {
     if (game == TRUE) {
       win = TRUE;
       run = FALSE;
+      SDL_BlitSurface(areawin, NULL, screen_surface, &rect);
+      SDL_UpdateWindowSurface(window);
+
     }
+    
     while (run == FALSE && win == TRUE) {
       while (SDL_PollEvent(&windowEvent) != 0) {
         if (windowEvent.key.keysym.sym == SDLK_r && windowEvent.type != SDL_MOUSEMOTION) {
@@ -218,6 +223,7 @@ int main(int argc, char **args) {
             ptrCell[1] = 12;
             getNumbers(cells);
             dsp(cells, rect2);
+            SDL_BlitSurface(area, NULL, screen_surface, &rect);
             getRetry = TRUE;
             win = FALSE;
             run = TRUE;
@@ -292,6 +298,7 @@ int load() {
   area = SDL_LoadBMP("area.bmp");
   block = SDL_LoadBMP("block.bmp");
   title = SDL_LoadBMP("title.bmp");
+  areawin = SDL_LoadBMP("areawin.bmp");
   numbers[0] = SDL_LoadBMP("numbers/1.bmp");
   numbers[1] = SDL_LoadBMP("numbers/2.bmp");
   numbers[2] = SDL_LoadBMP("numbers/3.bmp");
@@ -320,6 +327,8 @@ void quit() {
   block = NULL;
   SDL_FreeSurface(title);
   title = NULL;
+  SDL_FreeSurface(areawin);
+  areawin = NULL;
   for (int i = 0; i < 15; i++) {
     SDL_FreeSurface(numbers[i]);
     numbers[i] = NULL;
