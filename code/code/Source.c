@@ -323,7 +323,7 @@ int main(int argc, char** args)
     rect2.x = 60;
     rect2.y += 120;
   }
-}
+
     SDL_BlitSurface(area, NULL, screen_surface, &rect);
     SDL_BlitSurface(title, NULL, screen_surface, &rect3);
     SDL_BlitSurface(block, NULL, screen_surface, &rect2);
