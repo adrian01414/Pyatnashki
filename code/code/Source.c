@@ -343,4 +343,6 @@ void dsp(struct pyatna cells[16], SDL_Rect rect2) {
         rect2.x = 60;
         rect2.y += 120;
     }
+
 }
+
