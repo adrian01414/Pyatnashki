@@ -67,9 +67,24 @@ int main(int argc, char **args) {
   SDL_Event windowEvent;
   int run = TRUE, win = FALSE, getRetry = FALSE, getUp = FALSE, getDown = FALSE,
       getRight = FALSE, getLeft = FALSE, getClick = FALSE, ptrCell[2] = {3, 12};
+
+
   while (run == TRUE && win == FALSE) {
     while (SDL_PollEvent(&windowEvent) != 0) {
-      if (windowEvent.key.keysym.sym == SDLK_r) {
+      if (windowEvent.key.keysym.sym == SDLK_x && windowEvent.type != SDL_MOUSEMOTION) {
+        for (int i = 0; i < 16; i += 4) {
+          for (int j = 0; j < 4; j++) {
+            cells[i + j].mas = cells[i + j].trueMas + 1;
+              if (j + i == 14) cells[i + j].mas = 0;
+              if (j + i == 15) cells[i + j].mas = 15;
+              ptrCell[0] = 2;
+              ptrCell[1] = 12;
+              dsp(cells, rect2);
+          }
+        }
+      }
+
+      if (windowEvent.key.keysym.sym == SDLK_r && windowEvent.type != SDL_MOUSEMOTION) {
         if (getRetry == TRUE) {
           getRetry = FALSE;
         } else {
@@ -83,7 +98,7 @@ int main(int argc, char **args) {
 
       if (windowEvent.type == SDL_QUIT)
         run = FALSE;
-      if (windowEvent.key.keysym.sym == SDLK_ESCAPE)
+      if (windowEvent.key.keysym.sym == SDLK_ESCAPE && windowEvent.type != SDL_MOUSEMOTION)
         run = FALSE;
       if (windowEvent.key.keysym.sym == SDLK_UP) {
         if (getUp == TRUE) {
@@ -178,7 +193,49 @@ int main(int argc, char **args) {
       dsp(cells, rect2);
       SDL_UpdateWindowSurface(window);
     }
+    int game = TRUE;
+    for (int i = 0; i < 16; i += 4) {
+      for (int j = 0; j < 4; j++) {
+        if (i + j < 15) {
+          if (!(cells[i + j].mas == cells[i + j].trueMas + 1))
+            game = FALSE;
+        }else if(i + j == 15 && !(cells[i + j].mas == 00))
+          game = FALSE;
+      }
+    }
+    if (game == TRUE) {
+      win = TRUE;
+      run = FALSE;
+    }
+    while (run == FALSE && win == TRUE) {
+      while (SDL_PollEvent(&windowEvent) != 0) {
+        if (windowEvent.key.keysym.sym == SDLK_r && windowEvent.type != SDL_MOUSEMOTION) {
+          if (getRetry == TRUE) {
+            getRetry = FALSE;
+          }
+          else {
+            ptrCell[0] = 3;
+            ptrCell[1] = 12;
+            getNumbers(cells);
+            dsp(cells, rect2);
+            getRetry = TRUE;
+            win = FALSE;
+            run = TRUE;
+          }
+        }
+        
+        if (windowEvent.type == SDL_QUIT) {
+          run = FALSE;
+          win = FALSE;
+        }
+        if (windowEvent.key.keysym.sym == SDLK_ESCAPE && windowEvent.type != SDL_MOUSEMOTION) {
+          run = FALSE;
+          win = FALSE;
+        }
+      }
+    }
   }
+  
   quit();
   return 0;
 }
@@ -286,78 +343,4 @@ void dsp(struct pyatna cells[16], SDL_Rect rect2) {
         rect2.x = 60;
         rect2.y += 120;
     }
-}
-
-int main(int argc, char** args)
-{
-    SDL_Rect rect;
-    SDL_Rect rect2;
-    SDL_Rect rect3;
-    rect2.x = 60, rect2.y = 60;
-    rect.x = 50, rect.y = 50;
-    rect3.x = 0, rect3.y = 11;
-
-    struct pyatna cells[16];
-    for (int i = 0; i < 16; i += 4) {
-        for (int j = 0; j < 4; j++) {
-            cells[i + j].x = j;
-            cells[i + j].y = i;
-            cells[i + j].trueMas = i + j;
-        }
-    }
-
-    if (init() == 1) {
-        return 1;
-    }
-
-  for (int i = 0; i < 16; i += 4) {
-    for (int j = 0; j < 4; j++) {
-      SDL_BlitSurface(block, NULL, screen_surface, &rect2);
-      rect2.x += 4;
-      rect2.y += 4;
-      SDL_BlitSurface(numbers[cells[i + j].mas - 1], NULL, screen_surface,
-                      &rect2);
-      rect2.x += 116;
-      rect2.y -= 4;
-    }
-    rect2.x = 60;
-    rect2.y += 120;
-  }
-
-    SDL_BlitSurface(area, NULL, screen_surface, &rect);
-    SDL_BlitSurface(title, NULL, screen_surface, &rect3);
-    SDL_BlitSurface(block, NULL, screen_surface, &rect2);
-
-    srand(time(0));
-    getNumbers(cells);
-    dsp(cells, rect2);
-    
-    SDL_UpdateWindowSurface(window);
-
-    SDL_Event windowEvent;
-    int run = TRUE;
-    int getR = FALSE;
-    while (run) {
-        while (SDL_PollEvent(&windowEvent) != 0) {
-            if (windowEvent.key.keysym.sym == SDLK_r) {
-                if (getR == TRUE) {
-                    getR = FALSE;
-                }
-                else {
-                    getNumbers(cells);
-                    dsp(cells, rect2);
-                    getR = TRUE;
-                }
-                
-            }
-
-            if (windowEvent.type == SDL_QUIT)
-                run = FALSE;
-            if (windowEvent.key.keysym.sym == SDLK_ESCAPE)
-                run = FALSE;
-            SDL_UpdateWindowSurface(window);
-        }
-    }
-    quit();
-    return 0;
 }
