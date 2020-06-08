@@ -65,9 +65,9 @@ int main(int argc, char **args) {
   SDL_UpdateWindowSurface(window);
 
   SDL_Event windowEvent;
-  int run = TRUE, getRetry = FALSE, getUp = FALSE, getDown = FALSE,
-      getRight = FALSE, getLeft = FALSE, ptrCell[2] = {3, 12};
-  while (run) {
+  int run = TRUE, win = FALSE, getRetry = FALSE, getUp = FALSE, getDown = FALSE,
+      getRight = FALSE, getLeft = FALSE, getClick = FALSE, ptrCell[2] = {3, 12};
+  while (run == TRUE && win == FALSE) {
     while (SDL_PollEvent(&windowEvent) != 0) {
       if (windowEvent.key.keysym.sym == SDLK_r) {
         if (getRetry == TRUE) {
@@ -99,7 +99,6 @@ int main(int argc, char **args) {
           getUp = TRUE;
         }
       }
-
       if (windowEvent.key.keysym.sym == SDLK_DOWN) {
         if (getDown == TRUE) {
           getDown = FALSE;
@@ -142,6 +141,40 @@ int main(int argc, char **args) {
           getLeft = TRUE;
         }
       }
+
+      if (windowEvent.button.button == 1) {
+        if (getClick == TRUE) {
+          getClick = FALSE;
+        } else {
+          if ((windowEvent.button.x < 61 || windowEvent.button.x > 539) ||
+              windowEvent.button.y < 61 || windowEvent.button.y > 539) {
+            getClick = TRUE;
+            continue;
+          } else {
+            if ((ptrCell[0] == (windowEvent.button.x - 60) / 120 &&
+              ptrCell[1] - 4 == ((windowEvent.button.y - 60) / 120) * 4) ||
+              (ptrCell[0] == (windowEvent.button.x - 60) / 120 &&
+                ptrCell[1] + 4 == ((windowEvent.button.y - 60) / 120) * 4) ||
+              (ptrCell[0] - 1 == (windowEvent.button.x - 60) / 120 &&
+                ptrCell[1] == ((windowEvent.button.y - 60) / 120) * 4) ||
+              (ptrCell[0] + 1 == (windowEvent.button.x - 60) / 120 &&
+                ptrCell[1] == ((windowEvent.button.y - 60) / 120) * 4)) {
+              swap(&cells[ptrCell[0] + ptrCell[1]].mas,
+                &cells[(windowEvent.button.x - 60) / 120 +
+                ((windowEvent.button.y - 60) / 120) * 4]
+                .mas);
+              ptrCell[0] = (windowEvent.button.x - 60) / 120;
+              ptrCell[1] = ((windowEvent.button.y - 60) / 120) * 4;
+              getClick = TRUE;
+            }
+            else {
+              getClick = TRUE;
+              continue;
+            }
+          }
+        }
+      }
+
       dsp(cells, rect2);
       SDL_UpdateWindowSurface(window);
     }
