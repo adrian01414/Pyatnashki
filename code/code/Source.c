@@ -25,7 +25,7 @@ struct pyatna {
 
 void swap(int *, int *);
 int getRand(int, int);
-void getNumbers(struct pyatna[16]);
+void getNumbers(struct pyatna[16], int*, int*);
 int init();
 int load();
 void quit();
@@ -45,9 +45,10 @@ int main(int argc, char **args) {
       cells[i + j].x = j;
       cells[i + j].y = i;
       cells[i + j].trueMas = i + j;
+      cells[i + j].mas = cells[i + j].trueMas + 1;
     }
   }
-
+  cells[15].mas = 0;
   if (init() == 1) {
     return 1;
   }
@@ -59,15 +60,16 @@ int main(int argc, char **args) {
   SDL_BlitSurface(title, NULL, screen_surface, &rect3);
   SDL_BlitSurface(block, NULL, screen_surface, &rect2);
 
+  int ptrCell[2] = { 3, 12 };
   srand(time(0));
-  getNumbers(cells);
+  getNumbers(cells, &ptrCell[0], &ptrCell[1]);
   dsp(cells, rect2);
 
   SDL_UpdateWindowSurface(window);
 
   SDL_Event windowEvent;
   int run = TRUE, win = FALSE, getRetry = FALSE, getUp = FALSE, getDown = FALSE,
-      getRight = FALSE, getLeft = FALSE, getClick = FALSE, ptrCell[2] = {3, 12};
+      getRight = FALSE, getLeft = FALSE, getClick = FALSE;
 
 
   while (run == TRUE && win == FALSE) {
@@ -89,9 +91,7 @@ int main(int argc, char **args) {
         if (getRetry == TRUE) {
           getRetry = FALSE;
         } else {
-          ptrCell[0] = 3;
-          ptrCell[1] = 12;
-          getNumbers(cells);
+          getNumbers(cells, &ptrCell[0], &ptrCell[1]);
           dsp(cells, rect2);
           getRetry = TRUE;
         }
@@ -200,7 +200,7 @@ int main(int argc, char **args) {
         if (i + j < 15) {
           if (!(cells[i + j].mas == cells[i + j].trueMas + 1))
             game = FALSE;
-        }else if(i + j == 15 && !(cells[i + j].mas == 00))
+        }else if(i + j == 15 && !(cells[i + j].mas == 0))
           game = FALSE;
       }
     }
@@ -219,9 +219,7 @@ int main(int argc, char **args) {
             getRetry = FALSE;
           }
           else {
-            ptrCell[0] = 3;
-            ptrCell[1] = 12;
-            getNumbers(cells);
+            getNumbers(cells, &ptrCell[0], &ptrCell[1]);
             dsp(cells, rect2);
             SDL_BlitSurface(area, NULL, screen_surface, &rect);
             getRetry = TRUE;
@@ -254,24 +252,48 @@ void swap(int *a, int *b) {
 
 int getRand(int min, int max) { return rand() % (max - min) + min; }
 
-void getNumbers(struct pyatna obj[16]) {
-  int arr[17];
-  for (int i = 1; i <= 16; i++) {
-    arr[i] = 1;
-  }
-  for (int i = 0; i < 15; i++) {
-    obj[i].mas = getRand(1, 15);
-    if (arr[obj[i].mas] == 0) {
-      do {
-        if (obj[i].mas >= 2)
-          obj[i].mas--;
-        else
-          obj[i].mas = 15;
-      } while (arr[obj[i].mas] == 0);
+void getNumbers(struct pyatna obj[16], int* x, int* y) {
+    int zero[2];
+    zero[0] = *x;
+    zero[1] = *y;
+    for (int i = 0; i < 1000; i++) {
+        int randNum = getRand(1, 5);
+        if (randNum == 1) {
+            if (zero[1] == 0) {
+                continue;
+            }
+            swap(&obj[zero[0] + zero[1]].mas,
+                &obj[zero[0] + zero[1] - 4].mas);
+            zero[1] -= 4;
+        }
+        if (randNum == 2) {
+            if (zero[1] == 12) {
+                continue;
+            }
+            swap(&obj[zero[0] + zero[1]].mas,
+                &obj[zero[0] + zero[1] + 4].mas);
+            zero[1] += 4;
+        }
+        if (randNum == 3) {
+            if (zero[0] == 0) {
+                continue;
+            }
+            swap(&obj[zero[0] + zero[1]].mas,
+                &obj[zero[0] + zero[1] - 1].mas);
+            zero[0] --;
+        }
+        if (randNum == 4) {
+            if (zero[0] == 3) {
+                continue;
+            }
+            swap(&obj[zero[0] + zero[1]].mas,
+                &obj[zero[0] + zero[1] + 1].mas);
+            zero[0] ++;
+        }
+
     }
-    arr[obj[i].mas] = 0;
-  }
-  obj[15].mas = 0;
+    *x = zero[0];
+    *y = zero[1];
 }
 
 int init() {
