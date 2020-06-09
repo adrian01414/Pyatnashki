@@ -1,4 +1,4 @@
 all:
-	gcc -Wall Source.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o Source
+	gcc -o Source Source.c `sdl2-config --cflags --libs`
 clean: 
 	rm Source.o
