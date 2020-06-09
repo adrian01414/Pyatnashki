@@ -1,4 +1,3 @@
-all: Source.c
 Source.exe: Source.o
 	gcc -Wall Source.o -o Source
 Source.o: Source.c
