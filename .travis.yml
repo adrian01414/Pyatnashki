@@ -4,5 +4,4 @@ git:
 language: C
 script: 
   - cd code/code
-  - cd source
   - make
