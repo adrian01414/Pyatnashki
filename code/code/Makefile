@@ -1,6 +1,4 @@
-Source.exe: Source.o
-	gcc -Wall Source.o -o Source
-Source.o: Source.c
-	gcc -Wall -c Source.c -o Source.o
+all:
+	gcc -Wall Source.c -o Source
 clean: 
 	rm Source.o
