@@ -2,6 +2,8 @@ sudo: required
 git:
   depth: 1
 language: C
+before_install:
+-sudo apt-get install libsdl2-2.0
 script: 
   - cd code/code
   - make
