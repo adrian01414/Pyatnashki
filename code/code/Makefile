@@ -1,4 +1,4 @@
 all:
-	gcc -Wall Source.c -o Source -lSDL
+	gcc -Wall Source.c -o Source
 clean: 
 	rm Source.o
